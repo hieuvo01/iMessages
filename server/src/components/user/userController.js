@@ -4,6 +4,7 @@ const Verify = require('../../models/verifyaccount')
 const bcrypt = require('bcrypt')
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken")
+const winston = require('winston');
 let refreshTokens = [];
 const userController = {
     registerUser: async (req, res) => {
@@ -88,6 +89,15 @@ const userController = {
         return jwt.sign({ id: user.id, admin: user.admin }, process.env.JWT_ACCESS_KEY, { expiresIn: "100d" })
     },
     loginUser: async (req, res) => {
+        // Tạo logger
+        const logger = winston.createLogger({
+            level: 'info',
+            format: winston.format.json(),
+            transports: [
+                new winston.transports.Console(),
+                new winston.transports.File({ filename: 'server.log' })
+            ]
+        });
         try {
             const user = await User.findOne({
                 email: req.body.email
@@ -112,6 +122,8 @@ const userController = {
                 })
                 const { password, ...others } = user._doc; //hidden password
                 res.status(200).json({ others, token });
+                const currentTime = new Date();
+                logger.info(`${user.fullname} logged in ${currentTime}`);
             }
         } catch (e) {
             res.status(500).json(e)
