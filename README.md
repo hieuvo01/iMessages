@@ -1,5 +1,5 @@
 + Đăng ký, đăng nhập, cập nhật thông tin ( username (email), 
-password(hash), họ tên, giới tính, ngày sinh. OTP kích hoạt (timeout 10p)
+password(hash), họ tên, giới tính, ngày sinh. OTP kích hoạt (timeout 10p)===>done
 + Nhóm chat, gia nhập/rời nhóm chat.
 + Gửi tn 1-1 hoặc 1 nhóm.
 + Gửi file đính kèm < 1mb, sticker
@@ -10,6 +10,6 @@ password(hash), họ tên, giới tính, ngày sinh. OTP kích hoạt (timeout 1
 ======Server======
 
 + Thống kê user
-+ Ghi log khi user login
++ Ghi log khi user login ====>done
 + Block user bằng lệnh
 + Broadcast tin nhắn từ hệ thống => user
