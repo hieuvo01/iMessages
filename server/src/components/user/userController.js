@@ -3,6 +3,8 @@ const User = require('../../models/users')
 const Verify = require('../../models/verifyaccount')
 const bcrypt = require('bcrypt')
 const nodemailer = require("nodemailer");
+const jwt = require("jsonwebtoken")
+let refreshTokens = [];
 const userController = {
     registerUser: async (req, res) => {
         const transporter = nodemailer.createTransport({
@@ -77,6 +79,14 @@ const userController = {
             res.status(500).json(e)
         }
     },
+    //Generate access token
+    generateAccessToken: user => {
+        return jwt.sign({ id: user.id, admin: user.admin }, process.env.JWT_ACCESS_KEY, { expiresIn: "30s" })
+    },
+    //Generate refresh token
+    generateRefreshToken: user => {
+        return jwt.sign({ id: user.id, admin: user.admin }, process.env.JWT_ACCESS_KEY, { expiresIn: "100d" })
+    },
     loginUser: async (req, res) => {
         try {
             const user = await User.findOne({
@@ -90,11 +100,78 @@ const userController = {
             }
             const validPassword = await bcrypt.compare(req.body.password, user.password)
             if (!validPassword) res.status(404).json("wrong password")
-
-            res.status(200).json("success")
+            if (user && validPassword) {
+                const token = userController.generateAccessToken(user);
+                const refreshToken = userController.generateRefreshToken(user);
+                refreshTokens.push(refreshToken);
+                res.cookie("refreshToken", refreshToken, {
+                    httpOnly: true,
+                    secure: false,
+                    path: "/",
+                    sameSite: "strict"
+                })
+                const { password, ...others } = user._doc; //hidden password
+                res.status(200).json({ others, token });
+            }
         } catch (e) {
             res.status(500).json(e)
         }
+    },
+    getAllUser: async (req, res) => {
+        try {
+            const user = await User.find()
+            if (!user) {
+                res.status(404).json("Uer not found")
+            }
+            res.status(200).json(user)
+        } catch (e) {
+            res.status(500).json(e)
+        }
+    },
+    getUser: async (req, res) => {
+        try {
+            const user = await User.findOne({ _id: req.params.id });
+            if (!user) {
+                res.status(404).json("Uer not found")
+            }
+            res.status(200).json(user)
+        } catch (e) {
+            res.status(500).json(e)
+        }
+    },
+    refreshNewToken: async (req, res) => {
+        try {
+            const token = req.cookies.refreshToken;
+            if (!token) {
+                res.status(404).json("You are not authenticated")
+            }
+            if (!refreshTokens.includes(token)) {
+                return res.status(403).json("Refresh token is not valid !!!")
+            }
+            jwt.verify(token, process.env.JWT_ACCESS_KEY, (err, user) => {
+                if (err) {
+                    res.status(404).json(err);
+                }
+                refreshTokens = refreshTokens.filter(token => token !== token);
+                const newToken = userController.generateAccessToken(user)
+                const newRefreshToken = userController.generateRefreshToken(user)
+                refreshTokens.push(newRefreshToken)
+                res.cookie("refreshToken", newRefreshToken, {
+                    httpOnly: true,
+                    secure: false,
+                    path: "/",
+                    sameSite: "strict"
+                })
+                res.status(200).json({ token: newToken })
+            })
+        } catch (e) {
+            res.status(500).json(e)
+        }
+    },
+    Logout: async (req, res) => {
+        res.clearCookie("refreshToken");
+        refreshTokens = refreshTokens.filter(token => token !== req.cookies.refreshToken);
+        res.status(200).json("Logout Success !!!");
     }
 
 }
