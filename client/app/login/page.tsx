@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { useState } from "react";
-
+import cookie from 'js-cookie'
 export default function Login() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -16,6 +16,8 @@ export default function Login() {
 		};
 		try {
 			const response = await axios.post(`${process.env.URL}/user/login`, params);
+
+			cookie.set('token', response.data.token);
 			alert("Login Success !!!");
 			window.location.href = '/';
 		} catch (error) {
