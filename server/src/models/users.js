@@ -21,8 +21,7 @@ const userSchema = new Schema({
         required: true,
     },
     dob: {
-        type: Date,
-        required: true,
+        type: String,
     },
     admin: {
         type: Boolean,
