@@ -85,11 +85,11 @@ const userController = {
     },
     //Generate access token
     generateAccessToken: user => {
-        return jwt.sign({ id: user.id, admin: user.admin }, process.env.JWT_ACCESS_KEY, { expiresIn: "30s" })
+        return jwt.sign({ id: user.id, admin: user.admin, fullname: user.fullname }, process.env.JWT_ACCESS_KEY, { expiresIn: "30s" })
     },
     //Generate refresh token
     generateRefreshToken: user => {
-        return jwt.sign({ id: user.id, admin: user.admin }, process.env.JWT_ACCESS_KEY, { expiresIn: "100d" })
+        return jwt.sign({ id: user.id, admin: user.admin, fullname: user.fullname }, process.env.JWT_ACCESS_KEY, { expiresIn: "100d" })
     },
     loginUser: async (req, res) => {
         // Tạo logger
