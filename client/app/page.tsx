@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import jwtDecode from 'jwt-decode';
 import UserContext from '../context/context';
+import Main from "@/src/layout/main";
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -22,6 +23,7 @@ export default function Home() {
   return (
     <UserContext.Provider value={user}>
       <Header />
+      <Main />
     </UserContext.Provider>
   )
 }

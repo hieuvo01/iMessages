@@ -19,7 +19,7 @@ export default function Login() {
 
 			cookie.set('token', response.data.token);
 			alert("Login Success !!!");
-			window.location.href = '/';
+			window.location.href = '/?callback=1';
 		} catch (error) {
 			alert("Could not Login !!!");
 		}

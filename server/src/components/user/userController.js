@@ -85,7 +85,7 @@ const userController = {
     },
     //Generate access token
     generateAccessToken: user => {
-        return jwt.sign({ id: user.id, admin: user.admin, fullname: user.fullname }, process.env.JWT_ACCESS_KEY, { expiresIn: "30s" })
+        return jwt.sign({ id: user.id, admin: user.admin, fullname: user.fullname }, process.env.JWT_ACCESS_KEY, { expiresIn: "7d" })
     },
     //Generate refresh token
     generateRefreshToken: user => {
