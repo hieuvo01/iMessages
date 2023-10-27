@@ -1,6 +1,30 @@
 'use client'
 
+import axios from "axios";
+import { useEffect, useState } from "react";
+import cookie from 'js-cookie';
 export default function Main() {
+	const [dataUser, setDataUser] = useState<any>();
+	const token = cookie.get('token');
+
+	const loadDataUsers = async () => {
+		try {
+			const data = await axios.get(`${process.env.URL}/user/get-all`, {
+				headers:{
+					token
+				}
+			});
+			setDataUser(data);
+		} catch (error) {
+			alert(error)
+		}
+	}
+
+	useEffect(()=>{
+		loadDataUsers();
+	},[])
+
+	console.log(dataUser.data)
 	return (
 		<div className="bg-gray-100">
 			<div className="container mx-auto px-4 py-8">
@@ -10,9 +34,9 @@ export default function Main() {
 					<div className="w-1/4 bg-white p-4 mr-4">
 						<h2 className="text-lg font-semibold mb-2">Danh sách liên hệ</h2>
 						<ul>
-							<li className="py-2 hover:bg-gray-200 cursor-pointer">Người dùng 1</li>
-							<li className="py-2 hover:bg-gray-200 cursor-pointer">Người dùng 2</li>
-							<li className="py-2 hover:bg-gray-200 cursor-pointer">Người dùng 3</li>
+							{dataUser.data.map((items: any)=>(
+								<li className="py-2 hover:bg-gray-200 cursor-pointer">{items.fullname}</li>
+							))}
 						</ul>
 					</div>
 
