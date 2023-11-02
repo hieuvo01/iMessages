@@ -20,7 +20,7 @@ export default function Verify() {
 			const response = await axios.post(`${process.env.URL}/user/verify`, params);
 			route.push('/login');
 		} catch (error) {
-			alert("Could not verify !!!");
+			alert("Không thể xác thực tài khoản của bạn!");
 		}
 	};
 	return (
@@ -34,12 +34,12 @@ export default function Verify() {
 							onChange={(event) => setEmail(event.target.value)} name="email" className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500" placeholder="Email" required />
 					</div>
 					<div className="mb-6">
-						<label htmlFor="Otp" className="block text-gray-700 text-sm font-bold mb-2">Otp</label>
+						<label htmlFor="Otp" className="block text-gray-700 text-sm font-bold mb-2">Mã xác minh:</label>
 						<input type="text" id="Otp" value={otp}
 							onChange={(event) => setOtp(event.target.value)} name="Otp" className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500" placeholder="Mã OTP" required />
 					</div>
 					<div className="flex items-center justify-between">
-						<button type="submit" className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Submit</button>
+						<button type="submit" className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Gửi</button>
 					</div>
 				</form>
 			</div>

@@ -22,16 +22,16 @@ const userController = {
             const info = await transporter.sendMail({
                 from: process.env.SENDMAIL,
                 to: req.body.email,
-                subject: "Verify account ✔",
-                text: "Verify account",
-                html: `<b>Mã OTP tài khoản của bạn là</b> ${randomNumbers}`,
+                subject: "Xác minh tài khoản ✔",
+                text: "Xác minh tài khoản của bạn",
+                html: `<b>Xin chào! Mã OTP tài khoản của bạn là</b> ${randomNumbers}, vui lòng xác minh trong vòng 10 phút.`,
             });
             if (!info) {
-                return res.status(404).json("Wrong email");
+                return res.status(404).json("Sai địa chỉ email");
             }
             const checkEmail = await User.findOne({ email: req.body.email });
             if (checkEmail) {
-                return res.status(409).json("Email exists");
+                return res.status(409).json("Email đã tồn tại");
             }
             const newUser = new User({
                 email: req.body.email,
@@ -67,18 +67,18 @@ const userController = {
                 otp: req.body.otp
             });
             if (!very) {
-                return res.status(404).json("Fail very otp")
+                return res.status(404).json("Xác thực mã thất bại")
             }
             const checkUser = await User.findOne({
                 _id: email._id
             });
             if (Date.now() - checkUser.createdAt > expirationTime) {
-                return res.status(404).json("OTP invalid or expired");
+                return res.status(404).json("OTP không đúng hoặc đã hết hạn");
             }
             checkUser.isVerified = true;
             checkUser.save();
 
-            res.status(200).json("Verify success, pls login");
+            res.status(200).json("Xác minh thành công!");
         } catch (e) {
             res.status(500).json(e)
         }
@@ -106,13 +106,13 @@ const userController = {
                 email: req.body.email
             })
             if (!user) {
-                return res.status(404).json("email not found")
+                return res.status(404).json("Email không tồn tại!")
             }
             if (user.isVerified === false) {
-                return res.status(404).json("Account not verify, pls veryf.....")
+                return res.status(404).json("Tài khoản chưa được xác minh, vui lòng xác minh")
             }
             const validPassword = await bcrypt.compare(req.body.password, user.password)
-            if (!validPassword) res.status(404).json("wrong password")
+            if (!validPassword) res.status(404).json("Sai mật khẩu!")
             if (user && validPassword) {
                 const token = userController.generateAccessToken(user);
                 const refreshToken = userController.generateRefreshToken(user);
@@ -136,7 +136,7 @@ const userController = {
         try {
             const user = await User.find()
             if (!user) {
-                return res.status(404).json("Uer not found")
+                return res.status(404).json("Người dùng không tồn tại!")
             }
             res.status(200).json(user)
         } catch (e) {
@@ -147,7 +147,7 @@ const userController = {
         try {
             const user = await User.findOne({ _id: req.params.id });
             if (!user) {
-                return res.status(404).json("Uer not found")
+                return res.status(404).json("Người dùng không tồn tại!")
             }
             res.status(200).json(user)
         } catch (e) {
@@ -186,7 +186,7 @@ const userController = {
     Logout: async (req, res) => {
         res.clearCookie("refreshToken");
         refreshTokens = refreshTokens.filter(token => token !== req.cookies.refreshToken);
-        res.status(200).json("Logout Success !!!");
+        res.status(200).json("Đăng xuất thành công!");
     }
 
 }
