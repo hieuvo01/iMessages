@@ -98,6 +98,20 @@ const groupController = {
 		} catch (error) {
 			res.status(500).json({ error: "Lỗi khi gửi tin nhắn" });
 		}
+	},
+
+	getMessage: async (req, res) => {
+		try {
+			const { senderId, receiverId } = req.body;
+			const message = await Message.find({
+				sender: senderId,
+				receiver: receiverId
+			});
+
+			res.status(201).json(message);
+		} catch (error) {
+			res.status(500).json({ error: "Không tìm thấy tin nhắn !!!" });
+		}
 	}
 }
 module.exports = groupController
