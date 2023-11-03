@@ -40,6 +40,8 @@ io.on('connection', async (socket) => {
     });
 
     console.log('Thêm tin nhắn thành công:', message);
+
+		io.emit("message", message);
   });
 	socket.on('disconnect', () => {
 		console.log(`user ${socket.id} disconnected`);

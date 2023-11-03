@@ -8,6 +8,6 @@ router.post("/:groupId/join", middlewareController.verifyToken, groupController.
 router.post("/:groupId/leave", middlewareController.verifyToken, groupController.leaveGroup);
 router.post("/:groupId/messages", middlewareController.verifyToken, groupController.sendMessage);
 router.post("/messages", middlewareController.verifyToken, groupController.sendMessageOne);
-router.post("/get-message", middlewareController.verifyToken, groupController.getMessage);
+router.post("/get-message", groupController.getMessage);
 
 module.exports = router;
