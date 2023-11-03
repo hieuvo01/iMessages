@@ -37,5 +37,10 @@
 {"level":"info","message":"ok logged in Wed Nov 01 2023 20:44:45 GMT+0700 (Indochina Time)"}
 {"level":"info","message":"ok logged in Wed Nov 01 2023 21:35:34 GMT+0700 (Indochina Time)"}
 {"level":"info","message":"Admin logged in Wed Nov 01 2023 22:24:32 GMT+0700 (Indochina Time)"}
+<<<<<<< HEAD
 {"level":"info","message":"Minh Thư logged in Thu Nov 02 2023 19:46:17 GMT+0700 (Indochina Time)"}
 {"level":"info","message":"Minh Hậu logged in Thu Nov 02 2023 19:49:36 GMT+0700 (Indochina Time)"}
+=======
+{"level":"info","message":"Cong Minh logged in Thu Nov 02 2023 19:44:11 GMT+0700 (Indochina Time)"}
+{"level":"info","message":"Cong Minh logged in Thu Nov 02 2023 22:52:39 GMT+0700 (Indochina Time)"}
+>>>>>>> f1b7553407baffb3dfedfed677457a43252f2f16

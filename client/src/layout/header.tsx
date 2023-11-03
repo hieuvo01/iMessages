@@ -13,15 +13,15 @@ export default function Header() {
 	return (
 		<header className="flex items-center justify-around bg-gray-200 p-4">
 			<div className="flex items-center">
-			<div className="sm:mx-auto sm:w-full sm:max-w-md">
-							<img src="" alt="logo" height={48} width={48} className="mx-auto w-10" srcSet="/images/logo.png"/>
-			</div>
+				<div className="sm:mx-auto sm:w-full sm:max-w-md">
+					<img src="" alt="logo" height={48} width={48} className="mx-auto w-10" srcSet="/images/logo.png" />
+				</div>
 				{/* <img src="/logo.png" alt="Message Icon" className="w-8 h-8" /> */}
 			</div>
 			<div className="flex items-center space-x-2">
 				{/* <button className="text-blue-500 hover:text-blue-700">Thông báo</button> */}
 				<div className="relative">
-					<h3 className="text-gray-700 hover:text-gray-900">Xin chào {user}</h3>
+					<h3 className="text-gray-700 hover:text-gray-900">Xin chào {user?.fullname}</h3>
 					<button className="absolute top-full left-0 w-full bg-white border border-gray-200 text-gray-700 py-2 hover:text-gray-900" onClick={handleLogout}>Đăng xuất</button>
 				</div>
 			</div>

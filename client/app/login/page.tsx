@@ -3,6 +3,8 @@
 import axios from "axios";
 import { useState } from "react";
 import cookie from 'js-cookie'
+import socket from 'socket.io-client';
+
 export default function Login() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -19,7 +21,8 @@ export default function Login() {
 
 			cookie.set('token', response.data.token);
 			alert("Đăng nhập thành công, đang chuyển hướng ...");
-			window.location.href = '/?callback=1';
+			window.location.href = '/';
+			// socket.on
 		} catch (error) {
 			alert("Đăng nhập thất bại, vui lòng thử lại..");
 		}
