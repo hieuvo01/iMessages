@@ -103,12 +103,12 @@ const groupController = {
 	getMessage: async (req, res) => {
 		try {
 			const { senderId, receiverId } = req.body;
-			const message = await Message.find({
-				sender: senderId,
-				receiver: receiverId
-			});
-
-			res.status(201).json(message);
+			const messages = await Message.find({
+				$or: [{ sender: { $eq: senderId }, receiver: { $eq: receiverId } }, { sender: { $eq: receiverId }, receiver: { $eq: senderId } }],
+			})
+				.sort({ createdAt: 1 }); // sắp xếp theo thứ tự thời gian tăng dần
+	
+			res.status(201).json(messages);
 		} catch (error) {
 			res.status(500).json({ error: "Không tìm thấy tin nhắn !!!" });
 		}

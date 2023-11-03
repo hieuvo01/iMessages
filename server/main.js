@@ -27,7 +27,7 @@ app.use('/user', routeUser)
 app.use('/group', routeGroup)
 
 io.on('connection', async (socket) => {
-	console.log(`User ${socket.id} connected!`);
+	// console.log(`User ${socket.id} connected!`);
 	socket.on('sendMessage', async (data) => {
     // Thêm tin nhắn vào cơ sở dữ liệu
     const { senderId, receiverId, content, type } = data;
@@ -39,12 +39,26 @@ io.on('connection', async (socket) => {
       type,
     });
 
-    console.log('Thêm tin nhắn thành công:', message);
+    // console.log('Thêm tin nhắn thành công:', message);
 
-		io.emit("message", message);
+		socket.to(receiverId).emit("message", message);
+  });
+	socket.on('sendMessageGroup', async (data) => {
+    // Thêm tin nhắn vào cơ sở dữ liệu
+    const { senderId, content, type } = data;
+
+    const message = await Message.create({
+      sender: senderId,
+      content,
+      type,
+    });
+
+    // console.log('Thêm tin nhắn thành công:', message);
+
+		socket.to(senderId).emit("messageGroup", message);
   });
 	socket.on('disconnect', () => {
-		console.log(`user ${socket.id} disconnected`);
+		// console.log(`user ${socket.id} disconnected`);
 	});
 });
 
