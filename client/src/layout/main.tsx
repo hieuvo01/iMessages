@@ -1,14 +1,18 @@
 'use client'
 
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import cookie from 'js-cookie';
 import { io } from "socket.io-client";
 import FormChatUser from "./form-chat-user";
+import UserContext from "@/context/context";
 export default function Main() {
 	const [dataUser, setDataUser] = useState<any>();
 	const [user, setUser] = useState<any>();
 	const token = cookie.get('token');
+	const [loadMessMe, setLoadMessMe] = useState<any>();
+	const [checkMess, setCheckMess] = useState<any>(false);
+	const current = useContext(UserContext);
 
 	const loadDataUsers = async () => {
 		try {
@@ -23,12 +27,31 @@ export default function Main() {
 		}
 	}
 
-	const handleGetForm = (items: any) => {
+	const params = {
+		senderId: current?.id,
+		receiverId: user?._id
+	};
+
+	const loadMessageMe = async () => {
+		try {
+			const data = await axios.post(`${process.env.URL}/group/get-message`, params);
+			setLoadMessMe(data.data)
+			setCheckMess(true);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+
+	const handleGetForm = async (items: any) => {
 		setUser(items)
+		await loadMessageMe();
 	}
+	console.log(loadMessMe)
 
 	useEffect(() => {
 		loadDataUsers();
+		loadMessageMe();
 	}, [])
 
 	return (
@@ -46,7 +69,7 @@ export default function Main() {
 							))}
 						</ul>
 					</div>
-					<FormChatUser user={user} />
+					{checkMess && <FormChatUser user={user} dataMess={loadMessMe} />}
 				</div>
 			</div>
 		</div>

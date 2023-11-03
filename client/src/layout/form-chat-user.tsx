@@ -7,22 +7,29 @@ import { io } from "socket.io-client";
 
 interface IProps {
 	user: any;
+	dataMess: any;
 }
 
-export default function FormChatUser({ user }: IProps) {
+export default function FormChatUser({ user, dataMess }: IProps) {
 	const current = useContext(UserContext);
 	const [socket, setSocket] = useState<any>();
 	const [loadMessSend, setLoadMessSend] = useState<any>();
 	const [loadMessMe, setLoadMessMe] = useState<any>();
+	const [checkMess, setCheckMess] = useState(false);
 	const [message, setMessage] = useState<any>('');
 	const handleSendMessage = async () => {
 		socket.emit('sendMessage', {
 			senderId: current?.id,
-			receiver: user._id,
+			receiverId: user._id,
 			content: message,
 			type: 'text',
 		});
+		setMessage('');
 	};
+
+	if (dataMess.length !== 0) {
+		setCheckMess(true)
+	}
 
 	const params = {
 		senderId: current?.id,
@@ -32,7 +39,7 @@ export default function FormChatUser({ user }: IProps) {
 	const loadMessageMe = async () => {
 		try {
 			const data = await axios.post(`${process.env.URL}/group/get-message`, params);
-			setLoadMessMe(data)
+			setLoadMessMe(data.data)
 		} catch (error) {
 			console.log(error);
 		}
@@ -48,11 +55,16 @@ export default function FormChatUser({ user }: IProps) {
 	useEffect(() => {
 		const socket = io("http://localhost:3002");
 		setSocket(socket);
+		socket.on("message", (event) => {
+			const data = JSON.parse(event.data);
+
+			// Hiển thị dữ liệu tin nhắn
+			setMessage(data.content);
+		});
 		loadMessageMe();
 		// loadMessageSend();
 	}, [])
-	// console.log(loadMessSend)
-	console.log(loadMessMe)
+
 	return (
 		<div className="flex-1 bg-white p-4">
 			<div className="flex items-center mb-4">
@@ -61,24 +73,28 @@ export default function FormChatUser({ user }: IProps) {
 			</div>
 
 			<div className="bg-gray-200 p-4 rounded-lg">
-				<div className="message">
-					<div className="flex mb-2">
-						<div className="bg-gray-300 rounded-lg p-2 max-w-xs break-words">
-							Có điều gì bạn cần trợ giúp không?
+				{checkMess && dataMess?.map((message: any) => (
+					<>
+						<div className="message">
+							<div className="flex mb-2">
+								<div className="bg-gray-300 rounded-lg p-2 max-w-xs break-words">
+									{message?.sender !== current?.id && message?.content}
+								</div>
+							</div>
 						</div>
-					</div>
-				</div>
 
-				<div className="message">
-					<div className="flex flex-row-reverse mb-2">
-						<div className="bg-blue-500  text-white rounded-lg p-2 max-w-xs break-words">
-							Chào! Tôi có một câu hỏi về sản phẩm của bạn.
+						<div className="message">
+							<div className="flex flex-row-reverse mb-2">
+								<div className="bg-blue-500  text-white rounded-lg p-2 max-w-xs break-words">
+									{message?.sender === current?.id && message?.content}
+								</div>
+							</div>
 						</div>
-					</div>
-				</div>
+					</>
+				))}
 
 				<div className="flex mt-4">
-					<input id="input" onChange={e => setMessage(e.target.value)} type="text" placeholder="Nhập tin nhắn" className="flex-1 rounded-l-lg border border-gray-300 px-4 py-2 focus:outline-none focus:border-blue-500" />
+					<input id="input" value={message} onChange={e => setMessage(e.target.value)} type="text" placeholder="Nhập tin nhắn" className="flex-1 rounded-l-lg border border-gray-300 px-4 py-2 focus:outline-none focus:border-blue-500" />
 					<button onClick={handleSendMessage} className="bg-blue-500 text-white px-4 py-2 rounded-r-lg">Gửi</button>
 				</div>
 			</div>
